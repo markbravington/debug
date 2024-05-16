@@ -1,0 +1,51 @@
+30/1/2004: In R-1.8.1, 'object.size' gives an error on certain types of object (e.g. 'externalptr'). Code of 'print.if.small' adjusted to cope.
+
+3/2/2004: getOption( "debug.command.recall") now defaults to FALSE if 'savehistory' would give an error (as it will under ESS, for example), or TRUE otherwise; used to default to TRUE always.
+
+4/2/2004: minor changes to documentation in 'README.debug', mainly to do with ESS.
+
+16/2/2005: added support for 'local.on.exit' to match 'mvbutils'
+
+  Fixed obscure bug to do with missing-mode objects in 'move.to.next.expr'
+  
+  Fixed buggy display of long subscript-replacement expressions
+  
+  Fixed bugs with 'skip'ping into exit code
+  
+  NAMESPACEd it-- with difficulty, owing to the unusual nature of 'debug'.
+  
+2/4/2005: added 'debug.catfile' option to (by default) print to stderr() rather than stdout(); helps if 'sink' is in operation
+
+20/10/2008: added ESCAPE handling-- drops you back to the debugger prompt, rather than straight back to the terminal. (Unless the interrupt happens while you're in debug's own code-- need some muffleWarnings stuff.)
+
+28/10/2009: for-loop over factors now coerces to character; bug in replacement 'parent.frame' fixed; all references to 'delay' finally expunged (they were there only to help "legal" missing values).
+
+1/3/2010: 'with' statements now debugged, in separate "function" window. Only triggered if in step mode, and only for 'with.default' method. Should extend to 'within', and maybe use similar mechanism for 'try'/'tryCatch'
+
+5/4/2010: bugs fixed with 'Recall' and 'match.call'
+
+6/4/2010: 'with'-style step-into added for 'eval', 'evalq', 'try'. 'step.into.funs' added to control this behaviour.
+
+7/4/2010: bug fixed with changed behaviour of for- and while- loops in R 2.10; these now return NULL.
+
+7/5/2010: bugs fixed for single-statement 'with', for 'enclos' argument in 'eval'/'evalq'/'with', and for launching multiple windows at once (when a parent's window wasn't launched until a child ran). 
+ - Added support for 'within'. 
+ - All methods of 'with' and 'within' in base-R are now handled seamlessly.
+ - Note sneaky trick to trigger go-mode automatically; just put go() inside a breakpoint.
+ 
+20/7/2010: experimental support for time limit on autoprint, via 'debug.print.time.limit' in 'options()' 
+ 
+27/7/2010: bug fix
+ - couldn't qqq() when mtracee was called by 'try'-- now uses a new error class that 'try' shouldn't catch
+
+1/12/2011: "<missing>" only printed if in step mode. "<invisible>" printed for invisible! 'suppressWarnings' now handled as per 'eval' etc.
+
+23/4/2012: finally added easy in-package debugging, via eg 'mtrace(mypack:::myfun)'; also for functions that are in a list or environment, via 'mtrace(mything$myfun)'.
+
+7/9/2012: now handles 'eval.parent' properly.
+
+19/4/2016: script debugging added via 'mrun' and 'msource'
+
+7/7/2016: fixed handling of 'local', also fixing 'mrun' & 'msource' behaviour
+
+31/3/2017: added 'debug.last.window.hook', plus documentation for that and 'debug.first.window.hook' in 'package?debug'.
