@@ -1,0 +1,11 @@
+Package: debug
+Version: 1.4.13
+Author: Mark V. Bravington <markb2@summerinsouth.net>
+Maintainer: Mark V. Bravington <markb2@summerinsouth.net>
+Depends: R (>= 4.0), tcltk
+Imports: utils, mvbutils (>= 2.7)
+NeedsCompilation: no
+ByteCompile: false
+Title: MVB's Debugger for R
+Description: Proper debugger for R functions and scripts, with code display, graceful error recovery, line-numbered conditional breakpoints, access to exit code, flow control, and full keyboard input.
+License: GPL (>=2)
