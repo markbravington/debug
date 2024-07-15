@@ -82,6 +82,7 @@ function (libname, pkgname) {
     step.intos <- c(with = TRUE, within = TRUE, eval = TRUE,
       evalq = TRUE, local = TRUE, try = TRUE, suppressWarnings = TRUE,
       FOR = TRUE, do.on = TRUE, 
+      reclasso = TRUE, # cozza offarray... should have general mechanism!
       eval.parent = TRUE # eval.parent not working for this
     )
   }, asNamespace(pkgname))
@@ -464,6 +465,7 @@ function( expr, width = getOption( 'width', 120), numbering = TRUE, cat.on.exit 
       suppressWarnings = ,
       local = ,
       eval = ,
+      reclasso = ,
       evalq = {
          default.update.line.list()
          debuggify.system.call(step.check = TRUE)
@@ -1463,6 +1465,13 @@ function(...){
 }
 
 
+"debug.reclasso" <-
+function( expr, by){
+  # this won't work during MakeADFun
+  debug:::debug.eval( substitute( expr), envir=mvb.parent.frame())
+}
+
+
 "debug.return" <-
 function( ... ) do.in.envir( envir=sys.frame( find.active.control.frame() ), {
   if( i[1]>1)
@@ -2449,23 +2458,41 @@ return( local.return())
 })
 
 
+"mpdrun" <-
+function( script, ...) mrun( script, debug=TRUE, partial_parse_OK=TRUE, ...)
+
+
 "mrun" <-
-function( script, local=FALSE, debug=FALSE, echo=TRUE, print.eval=FALSE, ...) {
-    suppressWarnings( if( isT( local)) { # is_whingy( isT) == TRUE
-        local <- parent.frame() # leaving as TRUE would evaluate right here!
-      } else if( isF( local)) {
-        local <- .GlobalEnv
-      } else {
-        local <- as.environment( local)
-      }
-    )
+function( 
+  script, 
+  local= FALSE, 
+  debug= FALSE, 
+  echo= TRUE, 
+  print.eval= FALSE, 
+  partial_parse_OK= FALSE,
+  ...
+){
+  suppressWarnings( if( isT( local)) { # is_whingy( isT) == TRUE
+      local <- parent.frame() # leaving as TRUE would evaluate right here!
+    } else if( isF( local)) {
+      local <- .GlobalEnv
+    } else {
+      local <- as.environment( local)
+    }
+  )
 
   if( isF( debug)) {
     tc <- textConnection( script)
     on.exit( try( close( tc), silent=TRUE))
     source( tc, local=local, echo=echo, print.eval=print.eval, ...)
   } else {
-    pc <- parse( text=c( '{', script, '}'))[[1]]
+    if( !partial_parse_OK){
+      pc <- parse( text=c( '{', script, '}'))[[1]]
+      # ... will bork on unparseable source
+    } else {
+      pc <- partial_parse( script)
+    }
+    
     # Fiddly steps to create debuggable function
     fun <- function( nlocal=NULL) 1
     # formals( fun)$nlocal <- local # causes deparse woes; just set 'nlocal' manually when called
@@ -2606,8 +2633,11 @@ stop( "Can't find " %&% fname)
     list.of.command.subs <- make.locs( NULL)
     for( arg.name in names( formals( f))) {
       this.arg <- formals( f)[[ arg.name]]
-      if( !missing( this.arg) && ((mode( this.arg) != 'name') || nchar( as.character( this.arg)))) {
-        this.arg <- do.call( 'substitute', list( this.arg, list.of.command.subs)) # next etc.
+      if( !missing( this.arg) && 
+          ((mode( this.arg) != 'name') 
+          || nchar( as.character( this.arg)))) {
+        this.arg <- do.call( 'substitute', 
+            list( this.arg, list.of.command.subs)) # next etc.
         # Next line has 'list' wrapper so NULL doesn't delete
         formals( f)[ arg.name] <- list( debug.mvb.subst( this.arg)) # sys.nframe etc.
       }
@@ -2773,6 +2803,37 @@ stop( "No mtrace info for " %&% fname %&%
 # Returns name of the window-- but I think this is obsolete
   .frames.$window.name[ nrow( .frames.)]
 })
+
+
+"partial_parse" <-
+function( text){
+  p <- try( parse( text=text, keep.source=FALSE), silent=TRUE)
+  if( p %is.a% 'try-error'){
+    buggo <- attr( p, 'condition')
+    
+    n <- 1
+    repeat{
+      newp <- try( parse( text=text, keep.source=FALSE, n=n), 
+          silent=TRUE)
+      if( newp %is.a% 'try-error'){
+    break
+      }
+      p <- newp
+      n <- n+1
+    }
+  
+    print( buggo)
+    warning( sprintf( 'Parsed only %i expressions', n-1))
+    if( n==1){
+stop( "fail")
+    }
+  }
+  
+  # As if all statements in p were wrapped in curlies
+  # Yes, this is ugly... expressions, calls, etc just are
+  p <- as.call( c( list( quote( `{`)), as.list( p)))
+return( p)
+}
 
 
 "printIfSmall" <-
