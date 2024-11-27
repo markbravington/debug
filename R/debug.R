@@ -2528,7 +2528,7 @@ function( file, local=FALSE, debug=TRUE, ...) {
   if( !debug) {
     mc[[1]] <- quote( source)
   } else {
-    mc[[1]] <- quote( mrun)
+    mc[[1]] <- quote( mdrun)
     mc$script <- readLines( file)    
     mc$file <- NULL
   }

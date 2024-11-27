@@ -1,17 +1,17 @@
-debug-package                                   How to use the debug package
-bp                                              Breakpoints for debugging
-debug.C                                         For debugging C-calls with many arguments.
-debug.eval                                      Evaluate expression in debugging window
-debug_BROWSE                                    Debugging support
-debug_knitr                                     Debugging knitr documents
-duhook                                          Call user hook for debugging window
-fun.locator                                     Get environment(s) where an object exists.
-get.retval                                      Show current return value when debugging
-go-skip-qqq                                     Flow control for debugger
-is.mtraced                                      Check if a function has been 'mtrace'd.
-last.try.error                                  Get last try-error
-mrun                                            Run script with optional debugging
-mtrace                                          Interactive debugging
-step.into.sysfuns                               Control which "special" functions get stepped into
-tcltk_window_shaker                             Display fix for tcltk window in debug package
-use_consolette                                  Consolette
+debug-package                       How to use the debug package
+bp                                  Breakpoints for debugging
+debug.C                             For debugging C-calls with many arguments.
+debug.eval                          Evaluate expression in debugging window
+debug_BROWSE                        Debugging support
+debug_knitr                         Debugging knitr documents
+duhook                              Call user hook for debugging window
+fun.locator                         Get environment(s) where an object exists.
+get.retval                          Show current return value when debugging
+go-skip-qqq                         Flow control for debugger
+is.mtraced                          Check if a function has been 'mtrace'd.
+last.try.error                      Get last try-error
+mrun                                Run script with optional debugging
+mtrace                              Interactive debugging
+step.into.sysfuns                   Control which "special" functions get stepped into
+tcltk_window_shaker                 Display fix for tcltk window in debug package
+use_consolette                      Consolette
